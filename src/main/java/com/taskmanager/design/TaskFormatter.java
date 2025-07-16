@@ -1,6 +1,5 @@
 package com.taskmanager.design;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,7 @@ public class TaskFormatter {
   public static final String PURPLE = "\u001B[35m";
   public static final String CYAN = "\u001B[36m";
   public static final String WHITE = "\u001B[37m";
+  private static final String GRAY = "\033[90m";
 
   // Background colors
   public static final String BLACK_BG = "\u001B[40m";
@@ -37,6 +37,7 @@ public class TaskFormatter {
   public static final String PURPLE_BG = "\u001B[45m";
   public static final String CYAN_BG = "\u001B[46m";
   public static final String WHITE_BG = "\u001B[47m";
+  private static final String MAGENTA_BG = "\033[45m";
 
   // Text styles
   public static final String BOLD = "\u001B[1m";
@@ -146,16 +147,16 @@ public class TaskFormatter {
     sb.append(String.format("%sPriority:%s     %s\n", BOLD, RESET,
         getPriorityBadge(task.getPriority())));
     sb.append(String.format("%sCreated:%s      %s\n", BOLD, RESET,
-        task.getCreatedDate().format(DATE_FORMAT)));
+        task.getCreatedAt().format(DATE_FORMAT)));
 
     if (task.getDueDate() != null) {
       sb.append(String.format("%sDue Date:%s     %s\n", BOLD, RESET,
           task.getDueDate().format(DATE_FORMAT)));
     }
 
-    if (task.getCompletedDate() != null) {
+    if (task.getCompletedAt() != null) {
       sb.append(String.format("%sCompleted:%s    %s\n", BOLD, RESET,
-          task.getCompletedDate().format(DATE_FORMAT)));
+          task.getCompletedAt().format(DATE_FORMAT)));
     }
 
     sb.append(SEPARATOR);
@@ -219,16 +220,16 @@ public class TaskFormatter {
   public static String formatStats(List<Task> tasks) {
     long totalTasks = tasks.size();
     long completedTasks = tasks.stream()
-        .filter(t -> t.getStatus() == TaskStatus.COMPLETED)
+        .filter(t -> t.getStatus() == Status.COMPLETED)
         .count();
     long pendingTasks = tasks.stream()
-        .filter(t -> t.getStatus() == TaskStatus.PENDING)
+        .filter(t -> t.getStatus() == Status.PENDING)
         .count();
     long inProgressTasks = tasks.stream()
-        .filter(t -> t.getStatus() == TaskStatus.IN_PROGRESS)
+        .filter(t -> t.getStatus() == Status.IN_PROGRESS)
         .count();
 
-    Map<TaskPriority, Long> priorityCount = tasks.stream()
+    Map<Priority, Long> priorityCount = tasks.stream()
         .collect(Collectors.groupingBy(Task::getPriority, Collectors.counting()));
 
     StringBuilder sb = new StringBuilder();
@@ -242,11 +243,11 @@ public class TaskFormatter {
 
     sb.append("\n").append(String.format("%sPriority Breakdown:%s\n", BOLD, RESET));
     sb.append(String.format("%s├─ High:%s        %d\n", BOLD, RESET,
-        priorityCount.getOrDefault(TaskPriority.HIGH, 0L)));
+        priorityCount.getOrDefault(Priority.HIGH, 0L)));
     sb.append(String.format("%s├─ Medium:%s      %d\n", BOLD, RESET,
-        priorityCount.getOrDefault(TaskPriority.MEDIUM, 0L)));
+        priorityCount.getOrDefault(Priority.MEDIUM, 0L)));
     sb.append(String.format("%s└─ Low:%s         %d\n", BOLD, RESET,
-        priorityCount.getOrDefault(TaskPriority.LOW, 0L)));
+        priorityCount.getOrDefault(Priority.LOW, 0L)));
 
     if (totalTasks > 0) {
       double completionRate = (double) completedTasks / totalTasks * 100;
@@ -324,13 +325,13 @@ public class TaskFormatter {
     return String.format("%s%s %s%s", CYAN, spinner[frame % spinner.length], message, RESET);
   }
 
-  // Helper methods
-
+  // Helper methods\
   private static String getStatusIcon(Status status) {
     return switch (status) {
       case COMPLETED -> GREEN + "✓" + RESET;
       case IN_PROGRESS -> YELLOW + "●" + RESET;
       case PENDING -> RED + "○" + RESET;
+      case CANCELLED -> GRAY + "✗" + RESET;
     };
   }
 
@@ -339,6 +340,7 @@ public class TaskFormatter {
       case HIGH -> RED_BG + WHITE + " HIGH " + RESET;
       case MEDIUM -> YELLOW_BG + BLACK + " MED " + RESET;
       case LOW -> GREEN_BG + BLACK + " LOW " + RESET;
+      case URGENT -> MAGENTA_BG + WHITE + " URGENT " + RESET;
     };
   }
 
