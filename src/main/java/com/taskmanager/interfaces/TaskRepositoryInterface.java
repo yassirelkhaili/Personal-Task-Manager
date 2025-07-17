@@ -12,5 +12,5 @@ public interface TaskRepositoryInterface {
 
   void deleteById(String id) throws TaskManagerException;
 
-  List<Task> findAll();
+  List<Task> fetchAll();
 }

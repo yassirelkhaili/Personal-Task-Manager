@@ -41,7 +41,7 @@ public class TaskRepository implements TaskRepositoryInterface {
 
   public void saveTasks() throws TaskManagerException {
     try {
-      objectMapper.writeValue(dataFile, this.findAll());
+      objectMapper.writeValue(dataFile, fetchAll());
     } catch (IOException e) {
       throw new TaskManagerException("Failed to save tasks to file", e);
     }
@@ -74,6 +74,7 @@ public class TaskRepository implements TaskRepositoryInterface {
     return task;
   }
 
+  @Override
   public void deleteById(String id) throws TaskManagerException {
     Task removedTask = tasks.remove(id);
     if (removedTask == null) {
@@ -83,7 +84,7 @@ public class TaskRepository implements TaskRepositoryInterface {
   }
 
   @Override
-  public List<Task> findAll() {
+  public List<Task> fetchAll() {
     return new ArrayList<>(tasks.values());
   }
 }

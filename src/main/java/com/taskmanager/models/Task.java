@@ -75,7 +75,7 @@ public class Task {
     return title;
   }
 
-  public void setTitle(String title)  throws TaskManagerException {
+  public void setTitle(String title) throws TaskManagerException {
     if (title != null && title.length() > 100) {
       throw new TaskManagerException("Title cannot exceed 100 characters");
     }
