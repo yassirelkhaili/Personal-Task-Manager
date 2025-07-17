@@ -6,8 +6,7 @@ public class TaskManager {
 
   }
 
-  public void run() {
+  public static void run() {
 
   }
-
 }
