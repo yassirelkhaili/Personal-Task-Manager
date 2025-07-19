@@ -10,8 +10,8 @@ public class App {
   public static void main(String[] args) {
     try {
       System.out.println("Starting Task Manager Application...");
-      TaskManager.run();
-      throw new TaskManagerException("Random Exception throw");
+      TaskManager taskManager = new TaskManager();
+      taskManager.run();
     } catch (TaskManagerException e) {
       System.err.println("Error: " + e.getMessage());
       if (e.getCause() != null) {
