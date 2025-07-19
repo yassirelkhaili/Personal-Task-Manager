@@ -124,7 +124,7 @@ public class TaskFormatter {
     }
 
     sb.append(SEPARATOR);
-    sb.append(String.format("\n%sTotal: %d tasks%s", BOLD, tasks.size(), RESET));
+    sb.append(String.format("\n%sTotal tasks: %d %s", BOLD, tasks.size(), RESET));
 
     return sb.toString();
   }
@@ -182,6 +182,8 @@ public class TaskFormatter {
         "add <title>", "Add a new task",
         "list", "Show all tasks",
         "complete <id>", "Mark task as completed",
+        "cancel <id>", "Mark task as cancelled",
+        "list cancelled", "Show all cancelled tasks",
         "delete <id>", "Delete a task",
         "edit <id>", "Edit an existing task",
         "help", "Show this help menu",

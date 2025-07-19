@@ -8,12 +8,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.taskmanager.models.Task;
 import com.taskmanager.Utils;
-import java.util.ArrayList;
+import com.taskmanager.enums.Status;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 public class TaskRepository implements TaskRepositoryInterface {
   private final Map<String, Task> tasks = new HashMap<>();
@@ -22,12 +24,12 @@ public class TaskRepository implements TaskRepositoryInterface {
 
   public TaskRepository() {
     dataFile = Utils.getTasksFile();
-    loadTasks();
     loadObjectMapper();
+    loadTasks();
   }
 
   public void loadObjectMapper() {
-    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
   }
@@ -93,6 +95,11 @@ public class TaskRepository implements TaskRepositoryInterface {
 
   @Override
   public List<Task> fetchAll() {
-    return new ArrayList<>(tasks.values());
+    return tasks.values().stream().filter(task -> task.getStatus() != Status.CANCELLED).collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Task> fetchAllCancelled() {
+    return tasks.values().stream().filter(task -> task.getStatus() == Status.CANCELLED).collect(Collectors.toList());
   }
 }

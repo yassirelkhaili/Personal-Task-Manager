@@ -6,6 +6,7 @@ import com.taskmanager.errors.TaskManagerException;
 import com.taskmanager.services.TaskService;
 import com.taskmanager.services.TaskService.TaskData;
 import com.taskmanager.design.TaskFormatter;
+import com.taskmanager.enums.Status;
 import com.taskmanager.models.Task;
 import java.util.List;
 
@@ -76,6 +77,14 @@ public class TaskManager {
         }
         System.out.println(taskFormatter.formatTaskList(taskList, "Current Tasks:"));
       }
+      case "list cancelled" -> {
+        List<Task> taskList = taskService.readcancelledTasks();
+        if (Utils.isNullOrEmpty(taskList)) {
+          System.out.println(taskFormatter.formatInfo("No cancelled tasks yet."));
+          break;
+        }
+        System.out.println(taskFormatter.formatTaskList(taskList, "Cancelled Tasks:"));
+      }
       case "exit" -> {
         System.out.println(taskFormatter.formatSuccess("Exiting Task Manager..."));
         running = false;
@@ -91,14 +100,24 @@ public class TaskManager {
       }
       case "complete" -> {
         if (parts.length > 1) {
-          System.out.println(taskFormatter.formatInfo("Complete task " + parts[1] + " (not implemented yet)"));
+          taskService.updateTask(parts[1], new TaskData(null, null, null, null, Status.COMPLETED));
+          System.out.println(taskFormatter.formatInfo("Completed task " + parts[1]));
+        } else {
+          System.out.println(taskFormatter.formatError("Please provide a task ID"));
+        }
+      }
+      case "cancel" -> {
+        if (parts.length > 1) {
+          taskService.updateTask(parts[1], new TaskData(null, null, null, null, Status.CANCELLED));
+          System.out.println(taskFormatter.formatInfo("Cancelled task " + parts[1]));
         } else {
           System.out.println(taskFormatter.formatError("Please provide a task ID"));
         }
       }
       case "delete" -> {
         if (parts.length > 1) {
-          System.out.println(taskFormatter.formatWarning("Delete task " + parts[1] + " (not implemented yet)"));
+          taskService.deleteTask(parts[1]);
+          System.out.println(taskFormatter.formatWarning("Deleted task " + parts[1]));
         } else {
           System.out.println(taskFormatter.formatError("Please provide a task ID"));
         }

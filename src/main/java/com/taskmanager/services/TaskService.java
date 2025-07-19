@@ -4,6 +4,7 @@ import com.taskmanager.repositories.TaskRepository;
 import com.taskmanager.enums.Priority;
 import com.taskmanager.errors.TaskManagerException;
 import com.taskmanager.enums.Category;
+import com.taskmanager.enums.Status;
 import com.taskmanager.models.Task;
 import java.util.List;
 
@@ -11,9 +12,13 @@ public class TaskService {
 
   private final TaskRepository taskRepository = new TaskRepository();
 
-  public record TaskData(String title, String description, Priority priority, Category category) {
+  public record TaskData(String title, String description, Priority priority, Category category, Status status) {
     public TaskData(String title) {
-      this(title, null, Priority.MEDIUM, null);
+      this(title, null, Priority.MEDIUM, null, Status.PENDING);
+    }
+
+    public TaskData(Status status) {
+      this(null, null, null, null, status);
     }
   }
 
@@ -94,21 +99,32 @@ public class TaskService {
     if (taskData.category() != null) {
       existingTask.setCategory(taskData.category());
     }
+
+    if (taskData.status() != null) {
+      existingTask.setStatus(taskData.status());
+    }
+
     this.taskRepository.save(existingTask);
   }
 
-    /**
-   * Creates a new task with the provided data and saves it to the repository.
+  /**
+   * Retrieves all tasks from the repository.
    * 
-   * @param taskData the data object containing task information including title,
-   *                 description, priority, and category. Title is required,
-   *                 other fields are optional
-   * @throws TaskManagerException     if validation fails (e.g., empty title,
-   *                                  invalid description length, invalid
-   *                                  priority)
-   * @throws IllegalArgumentException if taskData is null
+   * @return a list of all tasks in the system
+   * @throws TaskManagerException if there's an error accessing the repository
    */
   public List<Task> readAvailableTasks() throws TaskManagerException {
     return taskRepository.fetchAll();
   }
+
+  /**
+   * Retrieves all tasks that have been cancelled.
+   * 
+   * @return a list of tasks with status CANCELLED
+   * @throws TaskManagerException if there's an error accessing the repository
+   */
+  public List<Task> readcancelledTasks() throws TaskManagerException {
+    return taskRepository.fetchAllCancelled();
+  }
+
 }
