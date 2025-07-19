@@ -181,9 +181,9 @@ public class TaskFormatter {
     Map<String, String> commands = Map.of(
         "add <title>", "Add a new task",
         "list", "Show all tasks",
+        "list", "Show all tasks",
         "complete <id>", "Mark task as completed",
         "cancel <id>", "Mark task as cancelled",
-        "list cancelled", "Show all cancelled tasks",
         "delete <id>", "Delete a task",
         "edit <id>", "Edit an existing task",
         "help", "Show this help menu",

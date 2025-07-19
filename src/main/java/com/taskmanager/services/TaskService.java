@@ -90,6 +90,10 @@ public class TaskService {
       throw new TaskManagerException("Task with ID '" + taskId + "' not found");
     }
 
+    if (taskData.title() != null) {
+      existingTask.setTitle(taskData.title());
+    }
+
     if (taskData.description() != null) {
       existingTask.setDescription(taskData.description());
     }
@@ -115,5 +119,20 @@ public class TaskService {
    */
   public List<Task> readAvailableTasks() throws TaskManagerException {
     return taskRepository.fetchAll();
+  }
+
+  /**
+   * Finds a task by its unique ID.
+   * 
+   * @param taskId the unique ID (UUID) of the task to find
+   * @return the task if found
+   * @throws TaskManagerException if task not found or repository error
+   */
+  public Task findTaskById(String taskId) throws TaskManagerException {
+    if (taskId == null || taskId.trim().isEmpty()) {
+      throw new TaskManagerException("Task ID cannot be null or empty");
+    }
+
+    return taskRepository.findById(taskId);
   }
 }
