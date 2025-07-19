@@ -77,14 +77,6 @@ public class TaskManager {
         }
         System.out.println(taskFormatter.formatTaskList(taskList, "Current Tasks:"));
       }
-      case "list cancelled" -> {
-        List<Task> taskList = taskService.readcancelledTasks();
-        if (Utils.isNullOrEmpty(taskList)) {
-          System.out.println(taskFormatter.formatInfo("No cancelled tasks yet."));
-          break;
-        }
-        System.out.println(taskFormatter.formatTaskList(taskList, "Cancelled Tasks:"));
-      }
       case "exit" -> {
         System.out.println(taskFormatter.formatSuccess("Exiting Task Manager..."));
         running = false;

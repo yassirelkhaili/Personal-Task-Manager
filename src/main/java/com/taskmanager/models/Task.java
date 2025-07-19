@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import com.taskmanager.enums.Priority;
 import com.taskmanager.enums.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.taskmanager.enums.Category;
 
 import com.taskmanager.errors.TaskManagerException;
@@ -258,10 +259,12 @@ public class Task {
     }
   }
 
+  @JsonIgnore
   public boolean isOverdue() {
     return dueDate != null && LocalDateTime.now().isAfter(dueDate) && status != Status.COMPLETED;
   }
 
+  @JsonIgnore
   public boolean isCompleted() {
     return status == Status.COMPLETED;
   }

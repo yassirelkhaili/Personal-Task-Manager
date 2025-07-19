@@ -94,7 +94,7 @@ public class TaskFormatter {
    * Formats a single task for display
    */
   public String formatTask(Task task) {
-    String status = task.getStatus().getDisplayName();
+    String status = getStatusBadge(task.getStatus());
     String priority = getPriorityBadge(task.getPriority());
     String dueDate = task.getDueDate() != null ? " (Due: " + task.getDueDate().format(DATE_FORMAT) + ")" : "";
 
@@ -325,10 +325,19 @@ public class TaskFormatter {
 
   // Helper methods
 
+  private String getStatusBadge(Status status) {
+    return switch (status) {
+      case PENDING -> YELLOW_BG + BLACK + " PENDING " + RESET;
+      case IN_PROGRESS -> BLUE_BG + WHITE + " IN PROGRESS " + RESET;
+      case COMPLETED -> GREEN_BG + WHITE + " COMPLETED " + RESET;
+      case CANCELLED -> RED_BG + WHITE + " CANCELLED " + RESET;
+    };
+  }
+
   private String getPriorityBadge(Priority priority) {
     return switch (priority) {
       case HIGH -> RED_BG + WHITE + " HIGH " + RESET;
-      case MEDIUM -> YELLOW_BG + BLACK + " MED " + RESET;
+      case MEDIUM -> YELLOW_BG + BLACK + " MEDIUM " + RESET;
       case LOW -> GREEN_BG + BLACK + " LOW " + RESET;
       case URGENT -> MAGENTA_BG + WHITE + " URGENT " + RESET;
     };

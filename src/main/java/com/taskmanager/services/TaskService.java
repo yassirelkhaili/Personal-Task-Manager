@@ -116,15 +116,4 @@ public class TaskService {
   public List<Task> readAvailableTasks() throws TaskManagerException {
     return taskRepository.fetchAll();
   }
-
-  /**
-   * Retrieves all tasks that have been cancelled.
-   * 
-   * @return a list of tasks with status CANCELLED
-   * @throws TaskManagerException if there's an error accessing the repository
-   */
-  public List<Task> readcancelledTasks() throws TaskManagerException {
-    return taskRepository.fetchAllCancelled();
-  }
-
 }
