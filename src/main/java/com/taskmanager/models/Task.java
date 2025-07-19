@@ -1,8 +1,6 @@
 package com.taskmanager.models;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -29,16 +27,6 @@ public class Task {
   private LocalDateTime updatedAt; // Last modification time
   private LocalDateTime dueDate; // Optional: Deadline
   private LocalDateTime completedAt; // When task was completed
-  private Integer estimatedHours; // Optional: Time estimate
-
-  // Organization
-  private List<String> tags; // Optional: Custom tags ["urgent", "meeting"]
-  private String assignedTo; // Optional: Who is responsible
-  private String projectId; // Optional: Group related tasks
-
-  // Progress Tracking
-  private Integer progressPercentage; // 0-100% completion
-  private String notes; // Optional: Additional notes
 
   // Constructors
   public Task() {
@@ -47,8 +35,6 @@ public class Task {
     this.updatedAt = LocalDateTime.now();
     this.status = Status.PENDING;
     this.priority = Priority.MEDIUM;
-    this.progressPercentage = 0;
-    this.tags = new ArrayList<>();
   }
 
   public Task(String title) {
@@ -81,7 +67,6 @@ public class Task {
       throw new TaskManagerException("Title cannot exceed 100 characters");
     }
     this.title = title;
-    updateTimestamp();
   }
 
   public String getDescription() {
@@ -93,7 +78,6 @@ public class Task {
       throw new TaskManagerException("Description cannot exceed 200 characters");
     }
     this.description = description;
-    updateTimestamp();
   }
 
   // Classification Getters and Setters
@@ -103,7 +87,6 @@ public class Task {
 
   public void setPriority(Priority priority) {
     this.priority = priority;
-    updateTimestamp();
   }
 
   public Status getStatus() {
@@ -112,12 +95,10 @@ public class Task {
 
   public void setStatus(Status status) {
     this.status = status;
-    updateTimestamp();
 
     // Auto-set completion time and progress when completed
     if (status == Status.COMPLETED) {
       this.completedAt = LocalDateTime.now();
-      this.progressPercentage = 100;
     } else if (status == Status.CANCELLED) {
       this.completedAt = null;
     }
@@ -129,7 +110,6 @@ public class Task {
 
   public void setCategory(Category category) {
     this.category = category;
-    updateTimestamp();
   }
 
   // Time Management Getters and Setters
@@ -155,7 +135,6 @@ public class Task {
 
   public void setDueDate(LocalDateTime dueDate) {
     this.dueDate = dueDate;
-    updateTimestamp();
   }
 
   public LocalDateTime getCompletedAt() {
@@ -164,99 +143,6 @@ public class Task {
 
   public void setCompletedAt(LocalDateTime completedAt) {
     this.completedAt = completedAt;
-  }
-
-  public Integer getEstimatedHours() {
-    return estimatedHours;
-  }
-
-  public void setEstimatedHours(Integer estimatedHours) throws TaskManagerException {
-    if (estimatedHours != null && estimatedHours < 0) {
-      throw new TaskManagerException("Estimated hours cannot be negative");
-    }
-    this.estimatedHours = estimatedHours;
-    updateTimestamp();
-  }
-
-  // Organization Getters and Setters
-  public List<String> getTags() {
-    return tags;
-  }
-
-  public void setTags(List<String> tags) {
-    this.tags = tags != null ? tags : new ArrayList<>();
-    updateTimestamp();
-  }
-
-  public String getAssignedTo() {
-    return assignedTo;
-  }
-
-  public void setAssignedTo(String assignedTo) {
-    this.assignedTo = assignedTo;
-    updateTimestamp();
-  }
-
-  public String getProjectId() {
-    return projectId;
-  }
-
-  public void setProjectId(String projectId) {
-    this.projectId = projectId;
-    updateTimestamp();
-  }
-
-  // Progress Tracking Getters and Setters
-  public Integer getProgressPercentage() {
-    return progressPercentage;
-  }
-
-  public void setProgressPercentage(Integer progressPercentage) throws TaskManagerException {
-    if (progressPercentage != null && (progressPercentage < 0 || progressPercentage > 100)) {
-      throw new TaskManagerException("Progress percentage must be between 0 and 100");
-    }
-    this.progressPercentage = progressPercentage;
-    updateTimestamp();
-
-    // Auto-update status based on progress
-    if (progressPercentage != null && progressPercentage == 100 && status != Status.COMPLETED) {
-      setStatus(Status.COMPLETED);
-    } else if (progressPercentage != null && progressPercentage > 0 && status == Status.PENDING) {
-      setStatus(Status.IN_PROGRESS);
-    }
-  }
-
-  public String getNotes() {
-    return notes;
-  }
-
-  public void setNotes(String notes) {
-    this.notes = notes;
-    updateTimestamp();
-  }
-
-  // Utility methods
-  private void updateTimestamp() {
-    this.updatedAt = LocalDateTime.now();
-  }
-
-  public void addTag(String tag) {
-    if (tag != null && !tag.trim().isEmpty()) {
-      if (this.tags == null) {
-        this.tags = new ArrayList<>();
-      }
-      if (!this.tags.contains(tag.trim())) {
-        this.tags.add(tag.trim());
-        updateTimestamp();
-      }
-    }
-  }
-
-  public void removeTag(String tag) {
-    if (this.tags != null && tag != null) {
-      this.tags.remove(tag.trim());
-      updateTimestamp();
-    }
   }
 
   @JsonIgnore
@@ -277,14 +163,10 @@ public class Task {
 
   public void markAsCompleted() throws TaskManagerException {
     setStatus(Status.COMPLETED);
-    setProgressPercentage(100);
   }
 
   public void markAsInProgress() throws TaskManagerException {
     setStatus(Status.IN_PROGRESS);
-    if (progressPercentage == null || progressPercentage == 0) {
-      setProgressPercentage(1);
-    }
   }
 
   // equals and hashCode
@@ -301,20 +183,5 @@ public class Task {
   @Override
   public int hashCode() {
     return Objects.hash(this.id);
-  }
-
-  // toString
-  @Override
-  public String toString() {
-    return "Task{" +
-        "id='" + id + '\'' +
-        ", title='" + title + '\'' +
-        ", priority=" + priority +
-        ", status=" + status +
-        ", category=" + category +
-        ", progressPercentage=" + progressPercentage +
-        ", dueDate=" + dueDate +
-        ", assignedTo='" + assignedTo + '\'' +
-        '}';
   }
 }

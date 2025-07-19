@@ -107,7 +107,7 @@ public class TaskService {
     if (taskData.status() != null) {
       existingTask.setStatus(taskData.status());
     }
-
+    this.taskRepository.updateTimeStamp(taskId);
     this.taskRepository.save(existingTask);
   }
 

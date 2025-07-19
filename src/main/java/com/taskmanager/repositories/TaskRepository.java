@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class TaskRepository implements TaskRepositoryInterface {
   private final Map<String, Task> tasks = new HashMap<>();
@@ -82,6 +83,14 @@ public class TaskRepository implements TaskRepositoryInterface {
 
     return task;
   }
+
+  @Override
+  public void updateTimeStamp(String id) throws TaskManagerException {
+    Task fetchedTask = findById(id);
+    fetchedTask.setUpdatedAt(LocalDateTime.now());
+  }
+
+
 
   @Override
   public void deleteById(String id) throws TaskManagerException {

@@ -178,21 +178,23 @@ public class TaskFormatter {
     sb.append(formatSectionHeader("Available Commands"));
     sb.append("\n\n");
 
-    Map<String, String> commands = Map.of(
-        "add <title>", "Add a new task",
-        "list", "Show all tasks",
-        "list", "Show all tasks",
-        "complete <id>", "Mark task as completed",
-        "cancel <id>", "Mark task as cancelled",
-        "delete <id>", "Delete a task",
-        "edit <id>", "Edit an existing task",
-        "help", "Show this help menu",
-        "exit", "Exit the application");
+    String[][] commands = {
+        { "add <title>", "Add a new task" },
+        { "add", "Add a new task (interactive)" },
+        { "list", "Show all tasks" },
+        { "list <id>", "Show task details" },
+        { "complete <id>", "Mark task as completed" },
+        { "cancel <id>", "Mark task as cancelled" },
+        { "delete <id>", "Delete a task" },
+        { "edit <id>", "Edit an existing task" },
+        { "help", "Show this help menu" },
+        { "exit", "Exit the application" }
+    };
 
-    commands.forEach((command, description) -> {
+    for (String[] command : commands) {
       sb.append(String.format("  %s%-15s%s %s\n",
-          GREEN + BOLD, command, RESET, description));
-    });
+          GREEN + BOLD, command[0], RESET, command[1]));
+    }
 
     sb.append("\n").append(SEPARATOR);
     return sb.toString();
