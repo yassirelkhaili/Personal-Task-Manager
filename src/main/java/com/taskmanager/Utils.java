@@ -1,6 +1,7 @@
 package com.taskmanager;
 
 import java.io.File;
+import java.util.List;
 
 public abstract class Utils {
   public static final String DATA_DIRECTORY = "src/main/java/com/taskmanager/data";
@@ -12,5 +13,9 @@ public abstract class Utils {
       dataDir.mkdirs();
     }
     return new File(dataDir, TASKS_FILENAME);
+  }
+
+  public static boolean isNullOrEmpty(List<?> list) {
+    return list == null || list.isEmpty();
   }
 }

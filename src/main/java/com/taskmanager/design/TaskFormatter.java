@@ -26,7 +26,6 @@ public class TaskFormatter {
   public final String PURPLE = "\u001B[35m";
   public final String CYAN = "\u001B[36m";
   public final String WHITE = "\u001B[37m";
-  private final String GRAY = "\033[90m";
 
   // Background colors
   public final String BLACK_BG = "\u001B[40m";

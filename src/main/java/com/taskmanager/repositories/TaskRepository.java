@@ -1,12 +1,13 @@
 package com.taskmanager.repositories;
 
 import com.taskmanager.interfaces.TaskRepositoryInterface;
-import com.taskmanager.models.Task;
-import com.taskmanager.Utils;
 import com.taskmanager.errors.TaskManagerException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.core.type.TypeReference;
-
+import com.taskmanager.models.Task;
+import com.taskmanager.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,12 +17,19 @@ import java.io.IOException;
 
 public class TaskRepository implements TaskRepositoryInterface {
   private final Map<String, Task> tasks = new HashMap<>();
-  private final ObjectMapper objectMapper = new ObjectMapper();
   private final File dataFile;
+  private ObjectMapper objectMapper;
 
   public TaskRepository() {
     dataFile = Utils.getTasksFile();
     loadTasks();
+    loadObjectMapper();
+  }
+
+  public void loadObjectMapper() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
   }
 
   private void loadTasks() {

@@ -3,21 +3,32 @@ package com.taskmanager;
 import java.util.Scanner;
 
 import com.taskmanager.errors.TaskManagerException;
+import com.taskmanager.services.TaskService;
+import com.taskmanager.services.TaskService.TaskData;
 import com.taskmanager.design.TaskFormatter;
+import com.taskmanager.models.Task;
+import java.util.List;
 
 public class TaskManager {
   private TaskFormatter taskFormatter;
+  private TaskService taskService;
   private Scanner scanner;
   private boolean running;
 
   public TaskManager() {
     loadFormatter();
     loadScanner();
+    loadTaskService();
     running = true;
+
   }
 
   private void loadFormatter() {
     taskFormatter = new TaskFormatter();
+  }
+
+  private void loadTaskService() {
+    taskService = new TaskService();
   }
 
   private void loadScanner() {
@@ -49,7 +60,7 @@ public class TaskManager {
     System.out.println(taskFormatter.formatInfo("Goodbye!"));
   }
 
-  private void processCommand(String input) {
+  private void processCommand(String input) throws TaskManagerException {
     String[] parts = input.split("\\s+");
     String command = parts[0].toLowerCase();
 
@@ -58,7 +69,12 @@ public class TaskManager {
         System.out.println(taskFormatter.formatHelpMenu());
       }
       case "list" -> {
-        System.out.println(taskFormatter.formatInfo("No tasks available yet."));
+        List<Task> taskList = taskService.readAvailableTasks();
+        if (Utils.isNullOrEmpty(taskList)) {
+          System.out.println(taskFormatter.formatInfo("No tasks available yet."));
+          break;
+        }
+        System.out.println(taskFormatter.formatTaskList(taskList, "Current Tasks:"));
       }
       case "exit" -> {
         System.out.println(taskFormatter.formatSuccess("Exiting Task Manager..."));
@@ -67,7 +83,8 @@ public class TaskManager {
       case "add" -> {
         if (parts.length > 1) {
           String title = String.join(" ", java.util.Arrays.copyOfRange(parts, 1, parts.length));
-          System.out.println(taskFormatter.formatSuccess("Task '" + title + "' would be added (not implemented yet)"));
+          taskService.createTask(new TaskData(title));
+          System.out.println(taskFormatter.formatSuccess("Task '" + title + "' added successfully!"));
         } else {
           System.out.println(taskFormatter.formatError("Please provide a task title"));
         }
