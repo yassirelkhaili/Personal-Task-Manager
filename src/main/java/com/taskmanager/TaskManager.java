@@ -10,6 +10,10 @@ import com.taskmanager.enums.Priority;
 import com.taskmanager.enums.Status;
 import com.taskmanager.enums.Category;
 import com.taskmanager.models.Task;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class TaskManager {
@@ -75,7 +79,7 @@ public class TaskManager {
         if (parts.length > 1) {
           String taskId = parts[1];
           Task task = taskService.findTaskById(taskId);
-          System.out.println(taskFormatter.formatTask(task));
+          System.out.println(taskFormatter.formatTaskDetails(task));
         } else {
           List<Task> taskList = taskService.readAvailableTasks();
           if (Utils.isNullOrEmpty(taskList)) {
@@ -107,7 +111,7 @@ public class TaskManager {
       case "complete" -> {
         if (parts.length > 1) {
           String taskId = parts[1];
-          taskService.updateTask(taskId, new TaskData(null, null, null, null, Status.COMPLETED));
+          taskService.updateTask(taskId, new TaskData(null, null, null, null, Status.COMPLETED, null));
           System.out.println(taskFormatter.formatInfo("Completed task " + taskId));
         } else {
           System.out.println(taskFormatter.formatError("Please provide a task ID"));
@@ -116,7 +120,7 @@ public class TaskManager {
       case "cancel" -> {
         if (parts.length > 1) {
           String taskId = parts[1];
-          taskService.updateTask(taskId, new TaskData(null, null, null, null, Status.CANCELLED));
+          taskService.updateTask(taskId, new TaskData(null, null, null, null, Status.CANCELLED, null));
           System.out.println(taskFormatter.formatInfo("Cancelled task " + taskId));
         } else {
           System.out.println(taskFormatter.formatError("Please provide a task ID"));
@@ -191,6 +195,28 @@ public class TaskManager {
     System.out.print(taskFormatter.formatPrompt(priorityPrompt));
     String priorityInput = scanner.nextLine().trim();
 
+    // Due Date
+    LocalDate finalDueDate = null;
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    String currentDueDate = isEdit && existingTask.getDueDate() != null
+        ? existingTask.getDueDate().format(dateFormatter)
+        : "none";
+
+    String dueDatePrompt = isEdit ? "New due date (" + currentDueDate + ") [yyyy-MM-dd]"
+        : "Due date (optional) [yyyy-MM-dd]";
+    System.out.print(taskFormatter.formatPrompt(dueDatePrompt));
+    String dueDateInput = scanner.nextLine().trim();
+
+    if (!dueDateInput.isEmpty()) {
+      try {
+        if (!dueDateInput.equalsIgnoreCase("none")) {
+          finalDueDate = LocalDate.parse(dueDateInput, dateFormatter);
+        }
+      } catch (DateTimeParseException e) {
+        System.out.println(taskFormatter.formatWarning("Invalid date format. Expected yyyy-MM-dd."));
+      }
+    }
+
     Priority finalPriority = null;
     if (!priorityInput.isEmpty()) {
       try {
@@ -238,7 +264,7 @@ public class TaskManager {
       }
     }
 
-    return new TaskData(finalTitle, finalDescription, finalPriority, finalCategory, finalStatus);
+    return new TaskData(finalTitle, finalDescription, finalPriority, finalCategory, finalStatus, finalDueDate);
   }
 
 }

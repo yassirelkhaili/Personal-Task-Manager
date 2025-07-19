@@ -6,19 +6,21 @@ import com.taskmanager.errors.TaskManagerException;
 import com.taskmanager.enums.Category;
 import com.taskmanager.enums.Status;
 import com.taskmanager.models.Task;
+
+import java.time.LocalDate;
 import java.util.List;
 
 public class TaskService {
 
   private final TaskRepository taskRepository = new TaskRepository();
 
-  public record TaskData(String title, String description, Priority priority, Category category, Status status) {
+  public record TaskData(String title, String description, Priority priority, Category category, Status status, LocalDate dueDate) {
     public TaskData(String title) {
-      this(title, null, Priority.MEDIUM, null, Status.PENDING);
+      this(title, null, Priority.MEDIUM, null, Status.PENDING, null);
     }
 
     public TaskData(Status status) {
-      this(null, null, null, null, status);
+      this(null, null, null, null, status, null);
     }
   }
 

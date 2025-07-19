@@ -25,7 +25,7 @@ public class Task {
   // Time Management
   private LocalDateTime createdAt; // When task was created
   private LocalDateTime updatedAt; // Last modification time
-  private LocalDateTime dueDate; // Optional: Deadline
+  private LocalDate dueDate; // Optional: Deadline
   private LocalDateTime completedAt; // When task was completed
 
   // Constructors
